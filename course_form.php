@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -27,24 +28,26 @@ require_once("lib.php");
  * This class contains function display_report which return user course name, course grade & completion date.
  */
 class course_status_form extends moodleform {
+
     public function definition() {
         return false;
     }
+
     public function display_report() {
         global $DB, $OUTPUT, $CFG, $USER;
         $userid = $USER->id;
         // Page parameters.
-        $page    = optional_param('page', 0, PARAM_INT);
+        $page = optional_param('page', 0, PARAM_INT);
         $perpage = optional_param('perpage', 30, PARAM_INT);    // How many record per page.
-        $sort    = optional_param('sort', 'firstname', PARAM_ALPHA);
-        $dir     = optional_param('dir', 'DESC', PARAM_ALPHA);
-        $sql = "SELECT course, gradefinal, DATE_FORMAT(DATE( FROM_UNIXTIME(timecompleted)),'%d-%b-%y')as dates FROM {course_completion_crit_compl} where userid = ".$userid;
+        $sort = optional_param('sort', 'firstname', PARAM_ALPHA);
+        $dir = optional_param('dir', 'DESC', PARAM_ALPHA);
+        $sql = "SELECT course, gradefinal, timecompleted as dates FROM {course_completion_crit_compl} where userid = " . $userid;
         $changescount = $DB->count_records_sql($sql, array($userid));
-        $columns = array('s_no' => get_string('s_no', 'block_course_status'),
-                         'course_name' => get_string('course_name', 'block_course_status'),
-                         'course_comp_date' => get_string('course_comp_date', 'block_course_status'),
-                         'grade' => get_string('grade', 'block_course_status'),
-                        );
+        $columns = array('s_no' => get_string('s_no', 'block_course_status_tracker'),
+            'course_name' => get_string('course_name', 'block_course_status_tracker'),
+            'course_comp_date' => get_string('course_comp_date', 'block_course_status_tracker'),
+            'grade' => get_string('grade', 'block_course_status_tracker'),
+        );
         $hcolumns = array();
         if (!isset($columns[$sort])) {
             $sort = 's_no';
@@ -58,35 +61,36 @@ class course_status_form extends moodleform {
                     $columndir = 'ASC';
                 }
             } else {
-                $columndir = $dir == 'ASC' ? 'DESC':'ASC';
+                $columndir = $dir == 'ASC' ? 'DESC' : 'ASC';
                 if ($column == 's_no') {
-                    $columnicon = $dir == 'ASC' ? 'up':'down';
+                    $columnicon = $dir == 'ASC' ? 'up' : 'down';
                 } else {
-                    $columnicon = $dir == 'ASC' ? 'down':'up';
+                    $columnicon = $dir == 'ASC' ? 'down' : 'up';
                 }
                 $columnicon = " <img src=\"" . $OUTPUT->pix_url('t/' . $columnicon) . "\" alt=\"\" />";
             }
-            $hcolumns[$column] = "<a href=\"view.php?viewpage=1&sort=$column&amp;dir=$columndir&amp;page=$page&amp;perpage=$perpage\">".$strcolumn."</a>$columnicon";
+            $hcolumns[$column] = "<a href=\"view.php?viewpage=1&sort=$column&amp;dir=$columndir&amp;page=$page&amp;perpage=$perpage\">" . $strcolumn . "</a>$columnicon";
         }
         $baseurl = new moodle_url('view.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
         echo $OUTPUT->paging_bar($changescount, $page, $perpage, $baseurl);
         $table = new html_table();
-        $table->head  = array(get_string('s_no', 'block_course_status_tracker'), get_string('course_name', 'block_course_status_tracker'), get_string('course_comp_date', 'block_course_status_tracker'), get_string('grade', 'block_course_status_tracker'));
-        $table->size  = array('10%', '30%', '40%', '20%');
-        $table->align  = array('center', 'left', 'center', 'center');
-        $table->width = '80%';
-        $table->data  = array();
+        $table->head = array(get_string('s_no', 'block_course_status_tracker'), get_string('course_name', 'block_course_status_tracker'), get_string('course_comp_date', 'block_course_status_tracker'), get_string('grade', 'block_course_status_tracker'));
+        $table->size = array('15%', '40%', '30%', '15%');
+        $table->width = "80%";
+        $table->align = array('center', 'left', 'center', 'center');
+        $table->data = array();
         $orderby = "$sort $dir";
-        $rs = $DB->get_recordset_sql($sql, array(),  $page*$perpage, $perpage);
-        $i=0;
+        $rs = $DB->get_recordset_sql($sql, array(), $page * $perpage, $perpage);
+        $i = 0;
         foreach ($rs as $log) {
             $row = array();
             $row[] = ++$i;
             $row[] = course_name($log->course);
-            $row[] = $log->dates;
-            $row[] = round($log->gradefinal).'%';
+            $row[] = userdate($log->dates, get_string('strftimedate', 'core_langconfig'));
+            $row[] = round($log->gradefinal) . '%';
             $table->data[] = $row;
         }
         return $table;
     }
+
 }
