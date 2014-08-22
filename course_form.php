@@ -21,168 +21,76 @@
  * @package blocks
  * @author: Azmat Ullah, Talha Noor
  */
+require_once("{$CFG->libdir}/formslib.php");
+require_once("lib.php");
 
 /**
- * This function count the total completed courses of any user
- *
- * @param int   $userid Variable
- * @return String $total_courses return total completed courses of any use.
+ * This class contains function display_report which return user course name, course grade & completion date.
  */
-function count_complete_course($userid) {
-    global $DB;
-    $total_courses = $DB->get_record_sql('SELECT count(course) as total_course FROM {course_completion_crit_compl} WHERE userid = ?', array($userid));
-    $total_courses = $total_courses->total_course;
-    return $total_courses;
-}
+class course_status_form extends moodleform {
 
-/**
- * This function retrun the total number of enrolled courses
- *
- * @see enrol_get_users_courses()
- * @param int   $userid Moodle user id 
- * @return String $count_course return total enrolled courses.
- */
-function user_enrolled_courses($userid) {
-    global $CFG;
-    $count_course = 0;
-    $courses = enrol_get_users_courses($userid, false, 'id, shortname, showgrades');
-    if ($courses) {
-        foreach ($courses as $course) {
-            $count_course+=1;
-        }
+    public function definition() {
+        return false;
     }
-    return $count_course;
-}
 
-/**
- * This function tells how many enrolled courses criteria has not set yet of the user.
- *
- * @see enrol_get_users_courses()
- * @param int   $userid Moodle user id
- * @return String $count return number that tells total undefined course criteria of course.
- */
-function count_course_criteria($userid) {
-    global $DB;
-    $count = 0;
-    $courses = enrol_get_users_courses($userid, false, 'id, shortname, showgrades');
-    if ($courses) {
-        $course_criteria_ns = array();
-        foreach ($courses as $course) {
-            $exist = $DB->record_exists('course_completion_criteria', array('course' => $course->id));
-            if (!$exist) {
-                $count++;
-                $course_criteria_ns[] = $course->id;
+    public function display_report() {
+        global $DB, $OUTPUT, $CFG, $USER;
+        $userid = $USER->id;
+        // Page parameters.
+        $page = optional_param('page', 0, PARAM_INT);
+        $perpage = optional_param('perpage', 30, PARAM_INT);    // How many record per page.
+        $sort = optional_param('sort', 'firstname', PARAM_ALPHA);
+        $dir = optional_param('dir', 'DESC', PARAM_ALPHA);
+        $sql = "SELECT course, gradefinal, timecompleted as dates FROM {course_completion_crit_compl} where userid = " . $userid;
+        $changescount = $DB->count_records_sql($sql, array($userid));
+        $columns = array('s_no' => get_string('s_no', 'block_course_status_tracker'),
+            'course_name' => get_string('course_name', 'block_course_status_tracker'),
+            'course_comp_date' => get_string('course_comp_date', 'block_course_status_tracker'),
+            'grade' => get_string('grade', 'block_course_status_tracker'),
+        );
+        $hcolumns = array();
+        if (!isset($columns[$sort])) {
+            $sort = 's_no';
+        }
+        foreach ($columns as $column => $strcolumn) {
+            if ($sort != $column) {
+                $columnicon = '';
+                if ($column == 's_no') {
+                    $columndir = 'DESC';
+                } else {
+                    $columndir = 'ASC';
+                }
+            } else {
+                $columndir = $dir == 'ASC' ? 'DESC' : 'ASC';
+                if ($column == 's_no') {
+                    $columnicon = $dir == 'ASC' ? 'up' : 'down';
+                } else {
+                    $columnicon = $dir == 'ASC' ? 'down' : 'up';
+                }
+                $columnicon = " <img src=\"" . $OUTPUT->pix_url('t/' . $columnicon) . "\" alt=\"\" />";
             }
+            $hcolumns[$column] = "<a href=\"view.php?viewpage=1&sort=$column&amp;dir=$columndir&amp;page=$page&amp;perpage=$perpage\">" . $strcolumn . "</a>$columnicon";
         }
-    }
-    return $count;
-}
-
-/**
- * This function return the course category.
- *
- * @param int   $id Moodle course id
- * @return String $module return category name of course.
- */
-function module_name($id) {
-    global $DB;
-    $module = $DB->get_record_sql('SELECT name FROM {course_categories}  WHERE id = ?', array($id));
-    $module = format_string($module->name);
-    return $module;
-}
-
-/**
- * This function return course name on the base of course id.
- *
- * @param int   $course Moodle course id
- * @return String $course Moodle course name.
- */
-function course_name($id) {
-    global $DB;
-    $course = $DB->get_record_sql('SELECT fullname  FROM {course} WHERE id = ?', array($id));
-    $course = format_string($course->fullname);
-    $course = $course . ' ' . get_string('course', 'block_course_status_tracker');
-    ;
-    return $course;
-}
-
-/**
- * This function return user detail in the form of table.
- *
- * @see get_custome_field($id, "Designation") This function return custom field Designation value on the bass userid
- * @param int   $id Moodle userid
- * @return String $table Moodle course name.
- */
-function user_details($id) {
-    global $OUTPUT, $DB;
-    // $user = new stdClass();
-    $user = $DB->get_record('user', array('id' => $id));
-    //$user->id = $id; // User Id.
-
-    $user->picture = $OUTPUT->user_picture($user, array('size' => 100));
-    // Fetch Data.
-    $result = $DB->get_record_sql('SELECT concat(firstname," ",lastname) as name,department, timecreated as date  FROM {user} WHERE id = ?', array($id));
-    $table = '<table width="80%"><tr><td width="20%" style="vertical-align:middle;" rowspan="5">' . $user->picture . '</td></tr>
-           <tr><td width="20%">' . get_string('name', 'block_course_status_tracker') . '</td><td>' . $result->name . '</td></tr>';
-
-    $check_designatino_field = get_custome_field($id, "Designation"); // Custom Field name for designation is "Designation".
-    if ($check_designatino_field != 0) {
-        $table .='<tr><td>' . get_string('job_title', 'block_course_status_tracker') . '</td><td>' . format_string($check_designatino_field) . '</td></tr>';
-    }
-    $table .='<tr><td>' . get_string('department', 'block_course_status_tracker') . '</td><td>' . format_string($result->department) . '</td></tr>
-             <tr><td>' . get_string('joining_date', 'block_course_status_tracker') . '</td><td>' . userdate($result->date, get_string('strftimedate', 'core_langconfig')) . '</td></tr>
-             </table>';
-    return $table;
-}
-
-/**
- * This function return the value of custom field on the base of parameter field name.
- *
- * @param int    $userid Moodle userid
- * @param string $text custom field name
- * @return string Return field value.
- */
-function get_custome_field($userid, $text) {
-    global $DB;
-    $result = $DB->get_record_sql('SELECT table2.data as fieldvalue  FROM {user_info_field} as table1  join  {user_info_data} as table2
-                                   on table1.id=table2.fieldid where table2.userid=? AND table1.name=?', array($userid, $text));
-
-    $fieldvalue = $result['fieldvalue'];
-    if (empty($fieldvalue)) {
-        return "0";
-    } else {
-        return format_string($result->fieldvalue);
-    }
-}
-
-/**
- * This function return list of courses in which user enrolled.
- *
- * @see module_name()
- * @enrol_get_users_courses
- * @param int    $userid Moodle userid
- * @return  Return table in which user can see the enrolled courses list.
- */
-function user_enrolled_courses_report($userid) {
-    global $CFG;
-    $count_course = 0;
-    $courses = enrol_get_users_courses($userid, false, 'id, shortname, showgrades');
-    if ($courses) {
+        $baseurl = new moodle_url('view.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
+        echo $OUTPUT->paging_bar($changescount, $page, $perpage, $baseurl);
         $table = new html_table();
-        $table->head = array(get_string('s_no', 'block_course_status_tracker'), get_string('module', 'block_course_status_tracker'), get_string('course_name', 'block_course_status_tracker'));
-        $table->size = array('20%', '35%', '50%');
+        $table->head = array(get_string('s_no', 'block_course_status_tracker'), get_string('course_name', 'block_course_status_tracker'), get_string('course_comp_date', 'block_course_status_tracker'), get_string('grade', 'block_course_status_tracker'));
+        $table->size = array('15%', '40%', '30%', '15%');
         $table->width = "80%";
-
-        $table->align = array('center', 'left', 'left');
+        $table->align = array('center', 'left', 'center', 'center');
         $table->data = array();
+        $orderby = "$sort $dir";
+        $rs = $DB->get_recordset_sql($sql, array(), $page * $perpage, $perpage);
         $i = 0;
-        foreach ($courses as $course) {
+        foreach ($rs as $log) {
             $row = array();
             $row[] = ++$i;
-            $row[] = module_name($course->category);
-            $row[] = "<a href=" . $CFG->wwwroot . "/course/view.php?id=" . $course->id . ">" . course_name($course->id) . "</a>";
+            $row[] = course_name($log->course);
+            $row[] = userdate($log->dates, get_string('strftimedate', 'core_langconfig'));
+            $row[] = round($log->gradefinal) . '%';
             $table->data[] = $row;
         }
+        return $table;
     }
-    return $table;
+
 }
