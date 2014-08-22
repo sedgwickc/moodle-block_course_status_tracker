@@ -13,16 +13,14 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /* Course Status Tracker Block
  * The plugin shows the number and list of enrolled courses and completed courses.
  * It also shows the number of courses which are in progress and whose completion criteria is undefined but the manger.
  * @package blocks
  * @author: Azmat Ullah, Talha Noor
- * @date: 13th Aug, 2013
+ * @date: 20-Aug-2014
  */
-
-$plugin->version   = 2013060700;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2010112400;        // Requires this Moodle version
-$plugin->release = '2.3';
-$plugin->maturity = MATURITY_BETA;
+$plugin->version = 2014082200;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires = 2013040500;        // Requires this Moodle version
+$plugin->release = '2.7';
+$plugin->maturity = MATURITY_ALPHA;
