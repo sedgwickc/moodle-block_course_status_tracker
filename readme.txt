@@ -14,3 +14,5 @@ Click on advanced feature under site administrator block
 Checked 'Enable completion tracking' and click on 'Save'.
 Goto course where you want to track the course status and enable course completion tracking
 Click on 'Save changes'
+Fixes 
+- Removed Warnings
