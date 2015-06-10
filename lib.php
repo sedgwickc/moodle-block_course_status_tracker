@@ -140,7 +140,7 @@ function get_custome_field($userid, $text) {
     $result = $DB->get_record_sql('SELECT table2.data as fieldvalue  FROM {user_info_field} as table1  join  {user_info_data} as table2
                                    on table1.id=table2.fieldid where table2.userid=? AND table1.name=?',
                                    array($userid, $text));
-    $fieldvalue=$result->fieldvalue;
+    $fieldvalue = $result['fieldvalue'];
     if(empty($fieldvalue)) {
         return "0";
     } else {
