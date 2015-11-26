@@ -41,7 +41,6 @@ if ($viewpage == 1) {
     $table = $form->display_report();
     if ($table) {
         echo "<div id='prints'>";
-        // $title = '<center><table width="80%" style="background-color:#F3F3F3;"><tr><td><center><h2>' . get_string('report_coursecompletion', 'block_course_status_tracker') . '</h2></center></td></tr></tr><table></center>';
         $title = '<h2>' . get_string('report_coursecompletion', 'block_course_status_tracker') . '</h2>';
         $title.=user_details($USER->id);
         $a = html_writer::table($table);
@@ -51,7 +50,6 @@ if ($viewpage == 1) {
     }
 } else if ($viewpage == 2) {
     echo "<div id='prints'>";
-    // $title = '<center><table width="80%" style="background-color:#F3F3F3;"><tr><td><center><h2>' . get_string('report_courseenrollment', 'block_course_status_tracker') . '</h2></center></td></tr></tr><table></center>';
     $title = '<h2>' . get_string('report_courseenrollment', 'block_course_status_tracker') . '</h2>';
     $title.=user_details($USER->id);
     echo $title;
@@ -60,19 +58,10 @@ if ($viewpage == 1) {
     echo "</div>";
 } else if ($viewpage == 3) {
     echo "<div id='prints'>";
-    // $title = '<center><table width="80%" style="background-color:#EEE;"><tr><td><center><h2>' . get_string('report_courseenrollment', 'block_course_status_tracker') . '</h2></center></td></tr></tr><table></center>';
-    $title = '<h2>' . get_string('report_courseenrollment', 'block_course_status_tracker') . '</h2>';
+    $title = '<h2>' . get_string('report_course_inprogress', 'block_course_status_tracker') . '</h2>';
     $title.=user_details($USER->id);
     echo $title;
-    echo html_writer::table(user_enrolled_courses_report($USER->id));
-    echo "</div>";
-} else if ($viewpage == 4) {
-    echo "<div id='prints'>";
-    // $title = '<center><table width="100%" style="background-color:#EEE;"><tr><td><center><h2>' . get_string('report_courseenrollment', 'block_course_status_tracker') . '</h2></center></td></tr></tr><table></center>';
-    $title = '<h2>' . get_string('report_courseenrollment', 'block_course_status_tracker') . '</h2>';
-    $title.=user_details($USER->id);
-    echo $title;
-    echo html_writer::table(user_enrolled_courses_report($USER->id));
+    echo html_writer::table(user_inprogress_courses_report($USER->id));
     echo "</div>";
 } else
     header($CFG->wwwroot);

@@ -25,6 +25,8 @@ $string['course_status'] = 'Course Status Tracker';
 $string['course_status_tracker'] = 'Course Status Tracker';
 $string['s_no'] = 'Serial <abbr title="number">No.</abbr>';
 $string['course_name'] = 'Course Name';
+$string['timeenrolled'] = 'Enrollment Date';
+$string['report_course_inprogress'] = 'Courses In-Progess';
 $string['course_comp_date'] = 'Course Completion Date';
 $string['grade'] = 'Grade';
 $string['course_status_tracker:view'] = 'Course Status View';

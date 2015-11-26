@@ -74,7 +74,12 @@ class course_status_form extends moodleform {
         $baseurl = new moodle_url('view.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
         echo $OUTPUT->paging_bar($changescount, $page, $perpage, $baseurl);
         $table = new html_table();
-        $table->head = array(get_string('s_no', 'block_course_status_tracker'), get_string('course_name', 'block_course_status_tracker'), get_string('course_comp_date', 'block_course_status_tracker'), get_string('grade', 'block_course_status_tracker'));
+        $table->head = array(
+        	get_string('s_no', 'block_course_status_tracker'), 
+        	get_string('course_name', 'block_course_status_tracker'), 
+        	get_string('course_comp_date', 'block_course_status_tracker'), 
+        	get_string('grade', 'block_course_status_tracker')
+        	);
         $table->size = array('15%', '40%', '30%', '15%');
         $table->width = "80%";
         $table->align = array('center', 'left', 'center', 'center');

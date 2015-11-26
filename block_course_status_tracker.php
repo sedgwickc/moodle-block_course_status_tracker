@@ -89,28 +89,41 @@ class block_course_status_tracker extends block_base {
             }
             $course_criteria_not_set = $count;
             // End course criteria.
+
             // Course inprogress
-            $count_inprogress_courses = abs(($enrolled_courses) - ($count_complete_courses + $course_criteria_not_set));
+            $count_inprogress_courses = abs(($enrolled_courses) - ($count_complete_courses 
+            	+ $course_criteria_not_set));
+
             if ($enrolled_courses > 0) {
-                $link_enrolled_courses = "<u><a href='" . $CFG->wwwroot . "/blocks/course_status_tracker/view.php?viewpage=2'>" .
-                        $enrolled_courses . "</a></u>";
+                $link_enrolled_courses = "<u><a href='" . $CFG->wwwroot . 
+                	"/blocks/course_status_tracker/view.php?viewpage=2'>" .
+                    $enrolled_courses . "</a></u>";
             } else {
                 $link_enrolled_courses = $enrolled_courses;
             }
             if ($count_complete_courses > 0) {
-                $link_count_complete_courses = "<u><a href='" . $CFG->wwwroot . "/blocks/course_status_tracker/view.php?viewpage=1'>" .
-                        $count_complete_courses . "</a></u>";
+                $link_count_complete_courses = "<u><a href='" . $CFG->wwwroot . 
+                	"/blocks/course_status_tracker/view.php?viewpage=1'>" .
+                    $count_complete_courses . "</a></u>";
             } else {
                 $link_count_complete_courses = $count_complete_courses;
             }
-            $link_course_criteria_not_set = "<a href='" . $CFG->wwwroot . "/blocks/course_status_tracker/view.php?viewpage=1'>" .
-                    $course_criteria_not_set . "</a>";
-            $link_count_inprogress_courses = "<a href='" . $CFG->wwwroot . "/blocks/course_status_tracker/view.php?viewpage=1'>" .
-                    $count_inprogress_courses . "</a>";
-            $this->content->text .= get_string('enrolled_courses', 'block_course_status_tracker') . " :	<b>" . $link_enrolled_courses . "</b><br>";
-            $this->content->text .= get_string('completed_courses', 'block_course_status_tracker') . " : <b>" . $link_count_complete_courses . "</b><br>";
-            $this->content->text .= get_string('inprogress_courses', 'block_course_status_tracker') . " : <b>" . $count_inprogress_courses . "</b><br>";
-            $this->content->text .= get_string('undefined_coursecriteria', 'block_course_status_tracker') . " : <b>" . $course_criteria_not_set . "</b><br>";
+
+            $link_course_criteria_not_set = "<a href='" . $CFG->wwwroot . 
+            	"/blocks/course_status_tracker/view.php?viewpage=1'>" .
+            	$course_criteria_not_set . "</a>";
+
+            $link_count_inprogress_courses = "<u><a href='" . $CFG->wwwroot . 
+            	"/blocks/course_status_tracker/view.php?viewpage=3'>".
+            	$count_inprogress_courses . "</a>";
+            $this->content->text = get_string('enrolled_courses', 'block_course_status_tracker') . 
+            	" :	<b>" . $link_enrolled_courses . "</b><br>";
+            $this->content->text .= get_string('completed_courses', 'block_course_status_tracker') . 
+            	" : <b>" . $link_count_complete_courses . "</b><br>";
+            $this->content->text .= get_string('inprogress_courses', 'block_course_status_tracker') . 
+            	" : <b>" . $link_count_inprogress_courses . "</b><br>";
+            $this->content->text .= get_string('undefined_coursecriteria', 'block_course_status_tracker') . 
+            	" : <b>" . $course_criteria_not_set . "</b><br>";
         } else {
             $this->content->text .= get_string('coursecompletion_setting', 'block_course_status_tracker');
         }
