@@ -46,7 +46,6 @@ class course_status_form extends moodleform {
         $sql_count = "SELECT count(course) FROM {course_completion_crit_compl} 
         	where userid = " . $userid;
         $changescount = $DB->count_records_sql($sql_count, array($userid));
-        print_r($changescount);
         $columns = array('s_no' => get_string('s_no', 'block_course_status_tracker'),
             'course_name' => get_string('course_name', 'block_course_status_tracker'),
             'course_comp_date' => get_string('course_comp_date', 'block_course_status_tracker'),
