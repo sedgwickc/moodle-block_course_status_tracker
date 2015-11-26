@@ -41,8 +41,12 @@ class course_status_form extends moodleform {
         $perpage = optional_param('perpage', 30, PARAM_INT);    // How many record per page.
         $sort = optional_param('sort', 'firstname', PARAM_ALPHA);
         $dir = optional_param('dir', 'DESC', PARAM_ALPHA);
-        $sql = "SELECT course, gradefinal, timecompleted as dates FROM {course_completion_crit_compl} where userid = " . $userid;
-        $changescount = $DB->count_records_sql($sql, array($userid));
+        $sql = "SELECT course, gradefinal, timecompleted dates FROM 
+        	{course_completion_crit_compl} where userid = " . $userid;
+        $sql_count = "SELECT count(course) FROM {course_completion_crit_compl} 
+        	where userid = " . $userid;
+        $changescount = $DB->count_records_sql($sql_count, array($userid));
+        print_r($changescount);
         $columns = array('s_no' => get_string('s_no', 'block_course_status_tracker'),
             'course_name' => get_string('course_name', 'block_course_status_tracker'),
             'course_comp_date' => get_string('course_comp_date', 'block_course_status_tracker'),
@@ -67,11 +71,15 @@ class course_status_form extends moodleform {
                 } else {
                     $columnicon = $dir == 'ASC' ? 'down' : 'up';
                 }
-                $columnicon = " <img src=\"" . $OUTPUT->pix_url('t/' . $columnicon) . "\" alt=\"\" />";
+                $columnicon = " <img src=\"" . $OUTPUT->pix_url('t/' . 
+                	$columnicon) . "\" alt=\"\" />";
             }
-            $hcolumns[$column] = "<a href=\"view.php?viewpage=1&sort=$column&amp;dir=$columndir&amp;page=$page&amp;perpage=$perpage\">" . $strcolumn . "</a>$columnicon";
+            $hcolumns[$column] = "<a href=\"view.php?viewpage=1&sort=$column
+            	&amp;dir=$columndir&amp;page=$page&amp;perpage=$perpage\">" . 
+            	$strcolumn . "</a>$columnicon";
         }
-        $baseurl = new moodle_url('view.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
+        $baseurl = new moodle_url('view.php', array('sort' => $sort, 'dir' => $dir,
+        	'perpage' => $perpage));
         echo $OUTPUT->paging_bar($changescount, $page, $perpage, $baseurl);
         $table = new html_table();
         $table->head = array(
