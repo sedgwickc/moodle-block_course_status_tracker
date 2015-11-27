@@ -114,7 +114,7 @@ class block_course_status_tracker extends block_base {
             }if( $count_inprogress_courses > 0){
             	$link_count_inprogress_courses = "<u><a href='" . $CFG->wwwroot . 
             		"/blocks/course_status_tracker/view.php?viewpage=3'>".
-            		$count_inprogress_courses . "</a>";
+            		$count_inprogress_courses . "</a></u>";
             } else {
             	$link_count_inprogress_courses = $count_inprogress_courses;
             }
