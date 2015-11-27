@@ -125,9 +125,9 @@ function user_details($id) {
     $table = '<table width="80%"><tr><td width="20%" style="vertical-align:middle;" rowspan="5">' . $user->picture . '</td></tr>
            <tr><td width="20%">' . get_string('name', 'block_course_status_tracker') . '</td><td>' . $result->name . '</td></tr>';
 
-    $check_designatino_field = report_get_custome_field($id, "Designation"); // Custom Field name for designation is "Designation".
-    if ($check_designatino_field != 0) {
-        $table .='<tr><td>' . get_string('job_title', 'block_course_status_tracker') . '</td><td>' . format_string($check_designatino_field) . '</td></tr>';
+    $check_designation_field = report_get_custom_field($id, "Designation"); // Custom Field name for designation is "Designation".
+    if ($check_designation_field != 0) {
+        $table .='<tr><td>' . get_string('job_title', 'block_course_status_tracker') . '</td><td>' . format_string($check_designation_field) . '</td></tr>';
     }
     $table .='<tr><td>' . get_string('department', 'block_course_status_tracker') . '</td><td>' . format_string($result->department) . '</td></tr>
              <tr><td>' . get_string('joining_date', 'block_course_status_tracker') . '</td><td>' . userdate($result->date, get_string('strftimedate', 'core_langconfig')) . '</td></tr>
@@ -142,7 +142,7 @@ function user_details($id) {
  * @param string $text custom field name
  * @return string Return field value.
  */
-function report_get_custome_field($userid, $text) {
+function report_get_custom_field($userid, $text) {
     global $DB;
     $result = $DB->get_record_sql('SELECT table2.data as fieldvalue  FROM {user_info_field} as table1  join  {user_info_data} as table2
                                    on table1.id=table2.fieldid where table2.userid=? AND table1.name=?', array($userid, $text));
