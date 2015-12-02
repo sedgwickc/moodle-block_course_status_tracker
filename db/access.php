@@ -23,7 +23,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 $capabilities = array(
-    'block/course_status:myaddinstance' => array(
+    'block/course_status_tracker:myaddinstance' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
@@ -33,7 +33,7 @@ $capabilities = array(
         'clonepermissionsfrom' => 'moodle/my:manageblocks'
     ),
  
-    'block/course_status:addinstance' => array(
+    'block/course_status_tracker:addinstance' => array(
         'riskbitmask' => RISK_SPAM | RISK_XSS,
  
         'captype' => 'write',
@@ -45,7 +45,7 @@ $capabilities = array(
  
         'clonepermissionsfrom' => 'moodle/site:manageblocks'
     ),
-        'block/course_status:view' => array(
+        'block/course_status_tracker:view' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
